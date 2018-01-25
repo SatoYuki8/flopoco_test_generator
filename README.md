@@ -1,8 +1,11 @@
 浮動小数点数がゼロ，無限大，正規化数，NaNのどれであるかチェックし，
+
 FloPoCoのテストベンチに対応するための上位2ビットの情報を追加するプログラム．
 
 makeでflotestgenができる
+
 ./flotestgen input_sample.csv 5 10 (make do)でサンプル実行
+
 
 ./flotestgen 入力ファイル 指数部のbit幅 仮数部のbit幅
 
