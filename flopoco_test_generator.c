@@ -5,7 +5,8 @@
 #include <gmp.h>
 
 typedef struct{
-  char *data[2];
+  int d_c;
+  char *data[16];
 }two_param;
 
 two_param split(char *str){
@@ -19,6 +20,7 @@ two_param split(char *str){
   int i=0;
 
   while(tmp != NULL){
+    data.d_c = i;
     data.data[i++] = tmp;
     tmp = strtok(NULL, " ");
   }
@@ -82,26 +84,19 @@ int main(int ac, char *av[]){
 
   two_param data;
   char str[64];
-  char *a, *b;
+  char *a;
 
-  char *exp_a, *exp_b;
-  char *frac_a, *frac_b;
+  char *exp_a;
+  char *frac_a;
 
   char *in_a;
-  char *in_b;
 
   char *zero_frac;
   char *zero_exp;
   char *inf;
 
-  a = (char *)calloc(bit_width*2, sizeof(char));
-  b = (char *)calloc(bit_width*2, sizeof(char));
-  exp_a = (char *)calloc(exp+1, sizeof(char));
-  exp_b = (char *)calloc(exp+1, sizeof(char));
-  frac_a = (char *)calloc(frac+1, sizeof(char));
-  frac_b = (char *)calloc(frac+1, sizeof(char));
-  in_a = (char *)calloc(bit_width*2, sizeof(char));
-  in_b = (char *)calloc(bit_width*2, sizeof(char));
+  int i;
+
   zero_frac = (char *)calloc(frac+1, sizeof(char));
   zero_exp = (char *)calloc(exp+1, sizeof(char));
   inf = (char *)calloc(exp+1, sizeof(char));
@@ -109,86 +104,63 @@ int main(int ac, char *av[]){
   zero_padding(zero_exp, exp);
   zero_padding(zero_frac, frac);
   one_padding(inf, exp);
-
+ 
   while (fgets(str, 64, fp) != NULL){
+    
+    a = (char *)calloc(bit_width*2, sizeof(char));
+    exp_a = (char *)calloc(exp+1, sizeof(char));
+    frac_a = (char *)calloc(frac+1, sizeof(char));
+    in_a = (char *)calloc(bit_width*2, sizeof(char));
+        
     data = split(str);
 
-    strcpy(a, data.data[0]);
-    strcpy(b, data.data[1]);
+    for (i=0;i<data.d_c;i++){
 
-    strncpy(exp_a, a+1, exp);
-    strncpy(exp_b, b+1, exp);
-    strncpy(frac_a, a+1+exp, frac);
-    strncpy(frac_b, b+1+exp, frac);    
+      strcpy(a, data.data[i]);
     
-    if(!strncmp(exp_a, zero_exp, bit_width)){
-      if(!strncmp(frac_a, zero_frac, bit_width)){
-	str_front_push(a, '0');
-	str_front_push(a, '0');
-	strcpy(in_a, a);
-      }
-      else{
-	str_front_push(a, '1');
-	str_front_push(a, '0');
-	strcpy(in_a, a);
-      }
-    }else if(!strncmp(exp_a, inf, bit_width)){
-      if(!strncmp(frac_a, zero_frac, bit_width)){
-	str_front_push(a, '0');
-	str_front_push(a, '1');
-	strcpy(in_a, a);
-      }
-      else{
-	str_front_push(a, '1');
-	str_front_push(a, '1');
-	strcpy(in_a, a);
-      }
-    }else if(a[1] == NULL){
-      strcpy(in_a, a);      
-    }else{
-	str_front_push(a, '1');
-	str_front_push(a, '0');
-	strcpy(in_a, a);
-    }
-
-    if(!strncmp(exp_b, zero_exp, bit_width)){
-      if(!strncmp(frac_b, zero_frac, bit_width)){
-	str_front_push(b, '0');
-	str_front_push(b, '0');
-	strcpy(in_b, b);
-      }
-      else{
-	str_front_push(b, '1');
-	str_front_push(b, '0');
-	strcpy(in_b, b);
-      }
-    }else if(!strncmp(exp_b, inf, bit_width)){
-      if(!strncmp(frac_b, zero_frac, bit_width)){
-	str_front_push(b, '0');
-	str_front_push(b, '1');
-	strcpy(in_b, b);
-      }
-      else{
-	str_front_push(b, '1');
-	str_front_push(b, '1');
-	strcpy(in_b, b);
-      }
-    }else{
-	str_front_push(b, '1');
-	str_front_push(b, '0');
-	strcpy(in_b, b);
-    }
-
-    gmp_printf("%s %s \n", in_a, in_b);  
+      strncpy(exp_a, a+1, exp);
+      strncpy(frac_a, a+1+exp, frac);
     
+      if(!strncmp(exp_a, zero_exp, bit_width)){
+	if(!strncmp(frac_a, zero_frac, bit_width)){
+	  str_front_push(a, '0');
+	  str_front_push(a, '0');
+	  strcpy(in_a, a);
+	}
+	else{
+	  str_front_push(a, '1');
+	  str_front_push(a, '0');
+	  strcpy(in_a, a);
+	}
+      }else if(!strncmp(exp_a, inf, bit_width)){
+	if(!strncmp(frac_a, zero_frac, bit_width)){
+	  str_front_push(a, '0');
+	  str_front_push(a, '1');
+	  strcpy(in_a, a);
+	}
+	else{
+	  str_front_push(a, '1');
+	  str_front_push(a, '1');
+	  strcpy(in_a, a);
+	}
+      }else if(a[1] == NULL){
+	strcpy(in_a, a);      
+      }else{
+	str_front_push(a, '1');
+	str_front_push(a, '0');
+	strcpy(in_a, a);
+      }
+
+      gmp_printf("%s ", in_a);  
+    }
+    
+    printf("\n");
+
+    free(exp_a);
+    free(frac_a);
+    free(in_a);
   }
   
-  free(exp_a);
-  free(exp_b);
-  free(frac_a);
-  free(frac_b);
-  free(in_a);
-  free(in_b);
   free(zero_exp);
   free(zero_frac);
   free(inf);
