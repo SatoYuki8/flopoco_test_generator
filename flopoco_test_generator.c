@@ -187,16 +187,16 @@ int main(int ac, char *av[]){
 
 	if(strlen(a) != exp+frac+1){
 	  strcpy(in_a, a);
-	}else if(inf_flag){
-	  str_front_push(a, '0');
-	  str_front_push(a, '1');
-	  strcpy(in_a, a);
-	  inf_flag = 0;
 	}else if(nan_flag){
 	  str_front_push(a, '1');
 	  str_front_push(a, '1');
 	  strcpy(in_a, a);
 	  nan_flag = 0;
+	}else if(inf_flag){
+	  str_front_push(a, '0');
+	  str_front_push(a, '1');
+	  strcpy(in_a, a);
+	  inf_flag = 0;
 	}else if(!strncmp(exp_a, zero_exp, bit_width)){
 	  if(!strncmp(frac_a, zero_frac, bit_width)){
 	    str_front_push(a, '0');
