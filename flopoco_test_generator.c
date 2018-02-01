@@ -83,7 +83,10 @@ int main(int ac, char *av[]){
   int bit_width = (1+exp+frac)*2;
 
   two_param data;
-  char str[64];
+
+  int N = (bit_width + 4) * 4;
+
+  char str[N];
   char *a;
 
   char *exp_a;
@@ -112,7 +115,7 @@ int main(int ac, char *av[]){
   zero_padding(zero_frac, frac);
   one_padding(inf, exp);
  
-  while (fgets(str, 64, fp) != NULL){
+  while (fgets(str, N, fp) != NULL){
     
     line++;
     
@@ -161,7 +164,7 @@ int main(int ac, char *av[]){
 	    strcpy(in_a, a);
 	    nan_flag=1;
 	  }
-	}else if(a[1] == NULL){
+	}else if(strlen(a) != exp+frac+1){
 	  strcpy(in_a, a);      
 	}else{
 	  str_front_push(a, '1');
